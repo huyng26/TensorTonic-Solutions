@@ -7,12 +7,15 @@ def pad_sequences(seqs, pad_value=0, max_len=None):
       L = max_len if provided else max(len(seq) for seq in seqs) or 0
     """
     # Your code here
-    if not max_len:
-        max_len = max([len(row) for row in seqs]) 
-    out = []
-    for seq in seqs:
-        seq = seq[:max_len]
-        while len(seq) < max_len:
-            seq.append(pad_value)
-        out.append(seq)
-    return np.asarray(out)
+    if max_len is None:
+        max_len = max(len(seq) for seq in seqs)
+
+    padded = np.full((len(seqs), max_len), pad_value, dtype=int)
+
+    for i, seq in enumerate(seqs):
+        seq_arr = np.asarray(seq, dtype=int)
+        n = min(len(seq_arr), max_len)
+        if n:
+            padded[i, :n] = seq_arr[:n]
+
+    return padded
